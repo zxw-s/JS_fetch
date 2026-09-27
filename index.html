@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>Fetch 请求示例</title>
+    <style>
+        .box {
+            width: 400px;
+            padding:20px;
+        }
+        #result {
+            margin-top:10px;
+            padding:10px;
+            border:1px solid #ccc;
+            min-height:100px;
+        }
+    </style>
+</head>
+<body>
+    <div class="box">
+        <h3>Fetch 网络请求演示</h3>
+        <button id="btnGet">发送GET请求</button>
+        <button id="btnPost">发送POST请求</button>
+        <div id="result">请求结果展示区域</div>
+    </div>
+
+    <script>
+        const btnGet = document.querySelector('#btnGet');
+        const btnPost = document.querySelector('#btnPost');
+        const resultDom = document.querySelector('#result');
+
+        // 格式化输出到页面
+        function showResult(text) {
+            resultDom.innerText = text;
+            console.log(text);
+        }
+
+        // ========== GET 请求（获取数据）==========
+        btnGet.addEventListener('click', async () => {
+            showResult("正在发送GET请求...");
+            try {
+                // 公共免费测试接口：JSONPlaceholder
+                const res = await fetch('[https://jsonplaceholder.typicode.com/posts/1](https://jsonplaceholder.typicode.com/posts/1)');
+                // 判断响应是否成功
+                if (!res.ok) {
+                    throw new Error(`HTTP错误：${res.status}`);
+                }
+                // 解析响应为JSON对象
+                const data = await res.json();
+                showResult(`GET成功：\n标题：${data.title}\n内容：${data.body}`);
+            } catch (err) {
+                showResult(`请求失败：${err.message}`);
+            }
+        });
+
+        // ========== POST 请求（提交数据）==========
+        btnPost.addEventListener('click', async () => {
+            showResult("正在发送POST请求...");
+            // 要传给后端的数据
+            const sendData = {
+                title: "JS学习",
+                body: "fetch POST测试",
+                userId: 1
+            };
+            try {
+                const res = await fetch('[https://jsonplaceholder.typicode.com/posts](https://jsonplaceholder.typicode.com/posts)', {
+                    method: "POST", // 请求方法
+                    headers: {
+                        // 告诉后端：本次请求体是JSON格式
+                        "Content-Type": "application/json"
+                    },
+                    // 对象转JSON字符串
+                    body: JSON.stringify(sendData)
+                });
+                if (!res.ok) {
+                    throw new Error(`HTTP错误：${res.status}`);
+                }
+                const data = await res.json();
+                showResult(`POST成功，返回数据id：${data.id}`);
+            } catch (err) {
+                showResult(`请求失败：${err.message}`);
+            }
+        });
+    </script>
+</body>
+</html>
